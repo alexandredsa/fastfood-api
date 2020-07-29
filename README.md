@@ -1,5 +1,6 @@
 # FastFoodAPI
-Sample Go API to support a project of mobile app built with Flutter. 
+Sample Go API to support [mobile app ](https://github.com/alexandredsa/food_ranks)
+ built with Flutter. 
 ### GET - api/types
 ```
 [
