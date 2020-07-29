@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,7 +29,13 @@ func (frr *FoodReviewRepository) Save(foodReview *models.FoodReview) {
 }
 func (frr *FoodReviewRepository) FindAllByTypeId(foodTypeId primitive.ObjectID) (foodReviews []*models.FoodReview) {
 	collection := frr.getCollection()
-	cur, err := collection.Find(context.TODO(), bson.M{"foodSummaryId": foodTypeId})
+	findOptions := options.Find()
+	// Sort by `price` field descending
+	match := bson.D{{"$match", bson.D{{"foodSummaryId", foodTypeId}}}}
+	addFields := bson.D{{"$addFields", bson.D{{"position", bson.D{{"$add", []string{"$sauce", "$flavor", "$texture"}}}}}}}
+	sort := bson.D{{"$sort", bson.D{{"position", -1}}}}
+	findOptions.SetSort(bson.D{{"price", -1}})
+	cur, err := collection.Aggregate(context.TODO(), mongo.Pipeline{match, addFields, sort})
 	if err != nil {
 		log.Fatal(err)
 	}
