@@ -21,6 +21,7 @@ func (frc *FoodReviewController) SetupRoutes() {
 	frc.foodSummaryRepository = repositories.FoodSummaryRepository{}
 	frc.list()
 	frc.save()
+	frc.delete()
 }
 
 func (frc *FoodReviewController) list() {
@@ -41,11 +42,24 @@ func (frc *FoodReviewController) save() {
 			return
 		}
 		foodReview.FoodSummaryId = foodSummaryId
-		if err := frc.foodSummaryRepository.UpdateSummary(&foodSummary); err != nil {
+		if err := frc.foodSummaryRepository.IncreaseSummary(&foodSummary); err != nil {
 			c.Status(400)
 			return
 		}
 		frc.foodReviewRepository.Save(&foodReview)
 		c.Status(201)
+	})
+}
+
+func (frc *FoodReviewController) delete() {
+	frc.Router.DELETE("/:review_id", func(c *gin.Context) {
+		foodReviewId, _ := primitive.ObjectIDFromHex(c.Param("review_id"))
+		foodSummaryId, _ := primitive.ObjectIDFromHex(c.Param("id"))
+		frc.foodReviewRepository.Delete(foodReviewId)
+		foodSummary := models.FoodSummary{ID: foodSummaryId}
+		if err := frc.foodSummaryRepository.DecreaseSummary(&foodSummary); err != nil {
+			c.Status(400)
+			return
+		}
 	})
 }

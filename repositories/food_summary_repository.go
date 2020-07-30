@@ -58,15 +58,31 @@ func (fsr *FoodSummaryRepository) FindAll() (foodSummaries []*models.FoodSummary
 	return foodSummaries
 }
 
-func (fsr *FoodSummaryRepository) UpdateSummary(foodSummary *models.FoodSummary) (err error) {
+func (fsr *FoodSummaryRepository) IncreaseSummary(foodSummary *models.FoodSummary) (err error) {
 	currentSummary := fsr.FindById(foodSummary.ID)
 	if currentSummary == nil {
 		return errors.New("Summary not exists")
 	}
+	currentSummary.Count++
+	fsr.UpdateSummary(currentSummary)
+	return nil
+}
+
+func (fsr *FoodSummaryRepository) DecreaseSummary(foodSummary *models.FoodSummary) (err error) {
+	currentSummary := fsr.FindById(foodSummary.ID)
+	if currentSummary == nil {
+		return errors.New("Summary not exists")
+	}
+	currentSummary.Count--
+	fsr.UpdateSummary(currentSummary)
+	return nil
+}
+
+func (fsr *FoodSummaryRepository) UpdateSummary(foodSummary *models.FoodSummary) (err error) {
 	collection := fsr.getCollection()
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	collection.UpdateOne(ctx, bson.M{"_id": foodSummary.ID}, bson.D{
-		{"$set", bson.D{{"count", currentSummary.Count + 1}}},
+		{"$set", bson.D{{"count", foodSummary.Count}}},
 	})
 	return nil
 }

@@ -27,6 +27,12 @@ func (frr *FoodReviewRepository) Save(foodReview *models.FoodReview) {
 	foodReview.ID = primitive.NewObjectID()
 	collection.InsertOne(ctx, foodReview)
 }
+
+func (frr *FoodReviewRepository) Delete(foodReviewId primitive.ObjectID) {
+	collection := frr.getCollection()
+	collection.DeleteOne(context.TODO(), bson.M{"_id": foodReviewId})
+}
+
 func (frr *FoodReviewRepository) FindAllByTypeId(foodTypeId primitive.ObjectID) (foodReviews []*models.FoodReview) {
 	collection := frr.getCollection()
 	findOptions := options.Find()

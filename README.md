@@ -68,3 +68,5 @@ Sample Go API to support [mobile app ](https://github.com/alexandredsa/food_rank
         "sauce": 5,
     }
 ```
+
+### DELETE - /api/types/:type_id/reviews/:review_id
