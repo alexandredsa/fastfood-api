@@ -5,6 +5,8 @@ import (
 	"fastfood-api/repositories"
 	"net/http"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,6 +35,7 @@ func (fsr *FoodSummaryController) save() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		fsr.foodSummaryRepository.Save(foodSummary.Name)
+		foodSummary.ID = primitive.NewObjectID()
+		fsr.foodSummaryRepository.Save(foodSummary)
 	})
 }

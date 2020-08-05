@@ -20,10 +20,10 @@ func (fsr *FoodSummaryRepository) getCollection() *mongo.Collection {
 	return mongoConfig.GetCollection("foodSummaries")
 }
 
-func (fsr *FoodSummaryRepository) Save(name string) {
+func (fsr *FoodSummaryRepository) Save(foodSummary models.FoodSummary) {
 	collection := fsr.getCollection()
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	foodSummary := models.FoodSummary{ID: primitive.NewObjectID(), Name: name, Count: 0}
+
 	collection.InsertOne(ctx, foodSummary)
 }
 
